@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 43 Quiz 1</title>
+
+    <style>
+        /* --- CSS Variables & Themes --- */
+        :root {
+            --transition-speed: 0.3s;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            
+            /* Default Feedback Colors (Fallback for custom themes) */
+            --feedback-success-bg: #064e3b;
+            --feedback-success-border: #059669;
+            --feedback-success-text: #a7f3d0;
+            --feedback-error-bg: #7f1d1d;
+            --feedback-error-border: #dc2626;
+            --feedback-error-text: #fecaca;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #1e293b; --bg-card: #334155; --bg-header: #0f172a;
+            --text-main: #f1f5f9; --text-muted: #94a3b8; --text-accent: #38bdf8;
+            --border-color: #475569; --highlight-bg: #475569;
+            --button-bg: #38bdf8; --button-text: #0f172a; --button-hover: #0ea5e9;
+        }
+
+        [data-theme="light"] {
+            --bg-body: #f3f4f6; --bg-card: #ffffff; --bg-header: #ffffff;
+            --text-main: #1f2937; --text-muted: #6b7280; --text-accent: #2563eb;
+            --border-color: #e5e7eb; --highlight-bg: #f3f4f6;
+            --button-bg: #2563eb; --button-text: #ffffff; --button-hover: #1d4ed8;
+            --feedback-success-bg: #ecfdf5; --feedback-success-border: #34d399; --feedback-success-text: #065f46;
+            --feedback-error-bg: #fef2f2; --feedback-error-border: #f87171; --feedback-error-text: #991b1b;
+        }
+
+        [data-theme="midnight"] {
+            --bg-body: #000000; --bg-card: #000000; --bg-header: #000000;
+            --text-main: #e0e0e0; --text-muted: #888888; --text-accent: #90caf9;
+            --border-color: #333333; --highlight-bg: #1a1a1a;
+            --button-bg: #90caf9; --button-text: #000000; --button-hover: #42a5f5;
+            --feedback-success-bg: #051b11; --feedback-success-border: #0f5132; --feedback-success-text: #75b798;
+            --feedback-error-bg: #2c0b0e; --feedback-error-border: #842029; --feedback-error-text: #ea868f;
+        }
+
+        [data-theme="legacy-dark"] {
+            --bg-body: #2d343e; --bg-card: #3c424f; --bg-header: #3c424f;
+            --text-main: #e8e6e3; --text-muted: #b0c4de; --text-accent: #8ab4f8;
+            --border-color: #555; --highlight-bg: #454c5a;
+            --button-bg: #8ab4f8; --button-text: #202124; --button-hover: #a3c5f9;
+            --feedback-success-bg: #344e41; --feedback-success-border: #52b788; --feedback-success-text: #c7f9cc;
+            --feedback-error-bg: #5e2129; --feedback-error-border: #a4133c; --feedback-error-text: #f8d7da;
+        }
+
+        [data-theme="sepia"] {
+            --bg-body: #f4ecd8; --bg-card: #fdf6e3; --bg-header: #e4d5b7;
+            --text-main: #433422; --text-muted: #7c6f5a; --text-accent: #a05a2c;
+            --border-color: #d3c4a5; --highlight-bg: #ebe1c9;
+            --button-bg: #a05a2c; --button-text: #fdf6e3; --button-hover: #864822;
+            --feedback-success-bg: #e6f4ea; --feedback-success-border: #8ab893; --feedback-success-text: #2e4c35;
+            --feedback-error-bg: #f9e3e3; --feedback-error-border: #d48f8f; --feedback-error-text: #5c2b2b;
+        }
+
+        [data-theme="contrast"] {
+            --bg-body: #000000; --bg-card: #000000; --bg-header: #000000;
+            --text-main: #ffffff; --text-muted: #dddddd; --text-accent: #ffff00;
+            --border-color: #ffffff; --highlight-bg: #333333;
+            --button-bg: #ffff00; --button-text: #000000; --button-hover: #e6e600;
+            --feedback-success-bg: #000000; --feedback-success-border: #00ff00; --feedback-success-text: #00ff00;
+            --feedback-error-bg: #000000; --feedback-error-border: #ff0000; --feedback-error-text: #ff0000;
+        }
+
+        /* --- Global Reset & Layout --- */
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-main);
+            margin: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            line-height: 1.6;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--bg-header);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        header.unpinned { position: relative; box-shadow: none; }
+
+        .header-top {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; flex-wrap: wrap; gap: 15px;
+        }
+
+        header h1 { font-size: 1.5rem; margin: 0; color: var(--text-accent); font-weight: 700; }
+
+        .controls-wrapper { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+        /* --- Custom Theme Builder --- */
+        .custom-builder {
+            display: none; flex-wrap: wrap; gap: 15px;
+            background-color: var(--bg-card); padding: 10px 15px;
+            border-radius: 8px; border: 1px solid var(--border-color);
+            margin-top: 5px; font-size: 0.85rem; animation: fadeIn 0.3s;
+            width: 100%; justify-content: flex-end;
+        }
+        .custom-builder.active { display: flex; }
+        .color-picker-group { display: flex; align-items: center; gap: 8px; }
+        .color-picker-group input[type="color"] {
+            border: none; width: 25px; height: 25px; border-radius: 4px;
+            cursor: pointer; padding: 0; background: none;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Controls --- */
+        .header-btn {
+            background-color: var(--highlight-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header-btn:hover {
+            border-color: var(--text-accent);
+            color: var(--text-accent);
+        }
+
+        .pin-btn {
+            background: none; border: 1px solid var(--border-color); color: var(--text-main);
+            cursor: pointer; padding: 0 10px; border-radius: 6px; font-size: 1rem;
+            transition: background-color 0.2s; height: 34px; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .pin-btn:hover { background-color: var(--highlight-bg); }
+        .pin-btn.pin-active { background-color: rgba(0, 0, 0, 0.1); }
+
+        select#theme-select {
+            padding: 0 12px; border-radius: 6px; border: 1px solid var(--border-color);
+            background-color: var(--bg-card); color: var(--text-main);
+            cursor: pointer; font-family: inherit; height: 34px;
+        }
+
+        /* --- Section Navigation --- */
+        .section-nav { display: flex; gap: 10px; flex-wrap: wrap; }
+        .section-nav button {
+            background-color: var(--highlight-bg); color: var(--text-main);
+            border: 1px solid var(--border-color); padding: 6px 12px;
+            border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+            font-weight: 500; transition: all 0.2s;
+        }
+        .section-nav button:hover { border-color: var(--text-accent); color: var(--text-accent); }
+
+        /* --- Main Content --- */
+        .container {
+            max-width: 850px;
+            margin: 2rem auto;
+            padding: 0 1rem 4rem 1rem;
+        }
+
+        .section-header {
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--text-accent);
+            color: var(--text-accent);
+            font-size: 1.5rem;
+            font-weight: 700;
+            scroll-margin-top: 150px; /* Offset for sticky header */
+        }
+
+        /* --- Question Card --- */
+        .question-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .lo-box {
+            background-color: var(--highlight-bg);
+            border-left: 4px solid var(--text-accent);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+            display: none; /* Hidden by default */
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Options --- */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: var(--highlight-bg);
+            border-color: var(--text-muted);
+        }
+
+        .option-label input {
+            margin-top: 0.3rem;
+            margin-right: 1rem;
+            accent-color: var(--text-accent);
+            transform: scale(1.2);
+        }
+
+        /* --- Buttons --- */
+        .btn-check {
+            margin-top: 1.5rem;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-check:hover {
+            opacity: 0.9;
+        }
+
+        .btn-link {
+            display: inline-block;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-link:hover {
+            opacity: 0.9;
+        }
+
+        /* --- Feedback Area --- */
+        .feedback {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+            border: 1px solid transparent;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.correct {
+            background-color: var(--feedback-success-bg);
+            border-color: var(--feedback-success-border);
+            color: var(--feedback-success-text);
+        }
+
+        .feedback.incorrect {
+            background-color: var(--feedback-error-bg);
+            border-color: var(--feedback-error-border);
+            color: var(--feedback-error-text);
+        }
+
+        .feedback-header {
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .rationale {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .source {
+            display: block;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            font-style: italic;
+            border-top: 1px dashed currentColor;
+            padding-top: 0.5rem;
+        }
+
+        /* --- Mobile Tweaks --- */
+        @media (max-width: 768px) {
+            .header-top { flex-direction: column; align-items: flex-start; }
+            .controls-wrapper { width: 100%; justify-content: flex-start; }
+            .section-nav { justify-content: flex-start; }
+            .custom-builder { justify-content: flex-start; }
+            header h1 { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="main-header">
+        <div class="header-top">
+            <h1>Week 43 Quiz 1</h1>
+            <div class="controls-wrapper">
+                
+                <!-- Reveal LOs Button in Header -->
+                <button id="reveal-all-btn" class="header-btn" onclick="toggleAllLOs()">Show Learning Objectives</button>
+
+                <!-- Pin Button -->
+                <button class="pin-btn pin-active" id="pin-btn" onclick="toggleHeader()" title="Pin/Unpin Header">📌</button>
+                
+                <!-- Theme Selector -->
+                <div class="theme-control">
+                    <select id="theme-select" onchange="changeTheme(this.value)">
+                        <option value="dark">Modern Dark</option>
+                        <option value="midnight">Midnight</option>
+                        <option value="light">Modern Light</option>
+                        <option value="legacy-dark">Legacy Dark</option>
+                        <option value="sepia">Sepia</option>
+                        <option value="contrast">High Contrast</option>
+                        <option value="custom">⚙️ Custom...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Custom Theme Color Pickers -->
+            <div class="custom-builder" id="custom-builder">
+                <div class="color-picker-group">
+                    <label>Background:</label>
+                    <input type="color" id="color-bg" value="#1a1a2e" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Cards:</label>
+                    <input type="color" id="color-card" value="#16213e" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Text:</label>
+                    <input type="color" id="color-text" value="#e94560" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Accent:</label>
+                    <input type="color" id="color-accent" value="#0f3460" oninput="updateCustomTheme()">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dynamic Navigation Bar -->
+        <div class="section-nav" id="section-nav"></div>
+    </header>
+
+    <div class="container">
+        <div id="quiz-root">
+            <!-- Content injected via JS -->
+        </div>
+    </div>
+
+    <script>
+        // --- Data ---
+        const quizData = [
+            // --- Section 1: Male Reproductive Histology ---
+            {
+                section: "Male Reproductive Histology",
+                fullLO: "LO1: List the organs of the male reproductive tract and identify their locations and functions.",
+                question: "A 28-year-old man evaluated for infertility is found to have a varicocele, an abnormal dilation of the venous plexus within the spermatic cord. This venous plexus normally plays a critical physiological role in promoting optimal spermatogenesis by performing which of the following functions?",
+                options: {
+                    A: "Concentrating systemic testosterone",
+                    B: "Cooling arterial blood traveling to the testis",
+                    C: "Phagocytosing residual bodies",
+                    D: "Secreting fructose to nourish spermatozoa",
+                    E: "Storing mature spermatozoa until ejaculation"
+                },
+                correctAnswer: "B",
+                rationale: "The pampiniform plexus of veins is located within the spermatic cord. It acts as a countercurrent heat exchanger, cooling the blood in the testicular artery before it reaches the testes. This maintains the testes at approximately 5 degrees below body temperature, which is strictly required for the development of spermatozoa.",
+                source: "Male Reproductive Histology Handout PDF, page 2: 'pampiniform plexus of veins (cooling of blood to testes for development of spermatozoa, 5º below body temperature needed)'"
+            },
+            {
+                section: "Male Reproductive Histology",
+                fullLO: "LO1: List the organs of the male reproductive tract and identify their locations and functions.",
+                question: "A 35-year-old man undergoes surgical exploration for a painful testicular mass. During the procedure, the surgeon makes an incision through the thick, fibrous outer connective tissue capsule that directly envelops the testicular parenchyma and maintains its internal structure. Which of the following structures is the surgeon incising?",
+                options: {
+                    A: "Cremasteric fascia",
+                    B: "Dartos fascia",
+                    C: "Ductus epididymis",
+                    D: "Tunica albuginea",
+                    E: "Tunica vaginalis"
+                },
+                correctAnswer: "D",
+                rationale: "The tunica albuginea is the dense, fibrous connective tissue capsule that constitutes the internal layer directly surrounding the testis. It is thickened along the posterior surface to form the mediastinum.",
+                source: "Male Reproductive Histology Handout PDF, page 2: 'tunica albuginea- internal layer of dense, fibrous connective tissue which is thickened along posterior surface as the mediastinum'"
+            },
+            {
+                section: "Male Reproductive Histology",
+                fullLO: "LO2: Know the microscopic organization of the seminiferous tubules: cells of the spermatogenic series stage of meiosis= content of DNA.",
+                question: "A researcher evaluating a testicular biopsy uses flow cytometry to analyze the DNA content of various spermatogenic cells. He isolates a population of cells located just below the spermatogonia. These cells are the largest germ cells present in the tubule and are actively preparing for reductional division. What is the chromosomal ploidy and DNA content of these specific cells prior to completing this first division?",
+                options: {
+                    A: "Haploid, 1N",
+                    B: "Haploid, 2N",
+                    C: "Diploid, 2N",
+                    D: "Diploid, 4N",
+                    E: "Tetraploid, 4N"
+                },
+                correctAnswer: "D",
+                rationale: "Primary spermatocytes are the largest germ cells present. Before they undergo Meiosis I (reductional division), their DNA has replicated, meaning they are diploid (have both maternal and paternal chromosomes) but have a 4N DNA chromosomal number.",
+                source: "Male Reproductive Histology Handout PDF, page 4: 'Primary Spermatocytes - located below spermatogonia (nearer lumen); are largest germ cell present because chromosomes have replicated; nuclei are usually observed in some stage of division; are diploid and 4N chromosomal number'"
+            },
+            {
+                section: "Male Reproductive Histology",
+                fullLO: "LO2: Know the microscopic organization of the seminiferous tubules: define events in spermiogenesis.",
+                question: "A couple undergoing in vitro fertilization testing discovers that the male partner's spermatozoa lack the enzymatic capability to penetrate the zona pellucida of the oocyte. This defect is traced back to abnormal spermiogenesis, specifically involving a failure to form the protective nuclear cap. Which of the following organelles normally secretes the enzymes required for this cap formation?",
+                options: {
+                    A: "Centriole",
+                    B: "Golgi apparatus",
+                    C: "Lysosome",
+                    D: "Mitochondria",
+                    E: "Smooth endoplasmic reticulum"
+                },
+                correctAnswer: "B",
+                rationale: "Spermiogenesis is the transformation of spermatids into mature spermatozoa. During this process, the Golgi apparatus secretes the protective nuclear cap (acrosomal cap) around the nucleus. The enzymes within this acrosome are required to penetrate the zona pellucida during fertilization.",
+                source: "Male Reproductive Histology Handout PDF, page 5: 'Spermiogenesis - transformation (differentiation) of spermatozoa from spermatids... (1) Golgi apparatus - secretes protective nuclear cap (acrosomal cap) around nucleus; enzymes of acrosome required to penetrate the zona pellucida'"
+            },
+            {
+                section: "Male Reproductive Histology",
+                fullLO: "LO2: Know the microscopic organization of the seminiferous tubules: Leydig & Sertoli cells cells: histological appearance, location & function.",
+                question: "A 24-year-old man undergoes a testicular biopsy. The pathologist identifies highly vascularized cell masses located in the loose connective tissue between the seminiferous tubules. High-power magnification of these cells demonstrates prominent crystals of Reinke and extensive smooth endoplasmic reticulum. Which of the following is the primary physiological function of these cells?",
+                options: {
+                    A: "Formation of the blood-testis barrier",
+                    B: "Phagocytosis of extruded residual bodies",
+                    C: "Secretion of androgen-binding protein",
+                    D: "Secretion of testosterone",
+                    E: "Structural support of spermatogonia"
+                },
+                correctAnswer: "D",
+                rationale: "Interstitial cells of Leydig are located outside the seminiferous tubules in the vascularized stroma between the tubules. They feature a well-developed Golgi, extensive smooth ER, and crystals of Reinke. Their primary function is to secrete the male sex hormone testosterone.",
+                source: "Male Reproductive Histology Handout PDF, page 6: 'Interstitial Cells (Leydig) These cell masses secrete the male sex hormone testosterone... a. vascularized cell masses located between seminiferous tubules... c. crystals of Reinke (human)'"
+            },
+            {
+                section: "Male Reproductive Histology",
+                fullLO: "LO3: Identify the actions and sites of testosterone & draw the mechanism that controls its secretion.",
+                question: "A 25-year-old man taking high-dose synthetic androgens for bodybuilding presents with testicular atrophy. Laboratory tests show profound suppression of luteinizing hormone (LH) due to negative feedback. Which specific cellular population in the testis relies directly on LH stimulation and will be most suppressed in this patient?",
+                options: {
+                    A: "Intercalated cells",
+                    B: "Leydig cells",
+                    C: "Myoid cells",
+                    D: "Sertoli cells",
+                    E: "Spermatogonia"
+                },
+                correctAnswer: "B",
+                rationale: "In the hypophyseal control of male reproduction, Luteinizing Hormone (LH) from the anterior pituitary specifically acts upon the Leydig cells to stimulate testosterone synthesis. Follicle-stimulating hormone (FSH) acts upon the seminiferous tubules (Sertoli cells).",
+                source: "Male Reproductive Histology Handout PDF, page 6: 'Diagram of the hypophyseal control of male reproduction in which luteinizing hormone (LH) acts upon the Leydig cells and follicle stimulating hormone acts upon the seminiferous tubules.'"
+            },
+            {
+                section: "Male Reproductive Histology",
+                fullLO: "LO3: Identify the actions and sites of testosterone & draw the mechanism that controls its secretion.",
+                question: "A 27-year-old male is evaluated for infertility. Laboratory tests show normal circulating levels of LH, FSH, and systemic testosterone. However, an intrinsic testicular defect prevents the proper sequestration of testosterone within the seminiferous tubules, inhibiting local sperm maturation. This defect is most likely due to the failure of Sertoli cells to produce which of the following?",
+                options: {
+                    A: "Acrosomal enzymes",
+                    B: "Androgen-binding protein (ABP)",
+                    C: "Gonadotropin-releasing hormone (GnRH)",
+                    D: "Inhibin",
+                    E: "Luteinizing hormone (LH)"
+                },
+                correctAnswer: "B",
+                rationale: "Testosterone is required locally in high concentrations for spermatogenesis. Nutritive Sertoli cells secrete Androgen-Binding Protein (ABP), a process dependent on FSH, to sequester androgens within the seminiferous tubules.",
+                source: "Male Reproductive Histology Handout PDF, page 6: 'Nutritive Cells (Sertoli or Sustentacular Cells)... 5. secrete androgen binding protein (dependent on FSH secretion)'"
+            },
+            {
+                section: "Male Reproductive Histology",
+                fullLO: "LO4: Create a chart w/microscopic appearance and function of each ductal element of the male reproductive tract.",
+                question: "A histological section of a male reproductive duct reveals a highly irregular, scalloped luminal border. The epithelium consists of alternating groups of ciliated columnar cells and secretory cuboidal cells. Which of the following is the most likely identity of this ductal element?",
+                options: {
+                    A: "Ductus deferens",
+                    B: "Efferent ductules",
+                    C: "Epididymis body",
+                    D: "Rete testis",
+                    E: "Tubuli recti"
+                },
+                correctAnswer: "B",
+                rationale: "The efferent ductules (which make up the head of the epididymis) are classically identified by their irregular, scalloped luminal surface composed of alternating groups of taller ciliated columnar cells and shorter secretory cuboidal cells.",
+                source: "Male Reproductive Histology Handout PDF, page 7: 'Efferent ductules (head of epididymis)... epithelium is composed of alternating groups of columnar and cuboidal cells making luminal surface very irregular'"
+            },
+            {
+                section: "Male Reproductive Histology",
+                fullLO: "LO4: Create a chart w/microscopic appearance and function of each ductal element of the male reproductive tract.",
+                question: "A pathologist examines a cross-section of a thick-walled tubular structure taken from the spermatic cord. The lumen is lined by pseudostratified columnar epithelium with stereocilia. The wall contains three distinct, massive layers of smooth muscle (inner longitudinal, middle circular, and outer longitudinal). What is the primary identity of this structure?",
+                options: {
+                    A: "Ductus deferens",
+                    B: "Ejaculatory duct",
+                    C: "Epididymis body",
+                    D: "Rete testis",
+                    E: "Seminal vesicle"
+                },
+                correctAnswer: "A",
+                rationale: "The ductus deferens (vas deferens) is identified by a pseudostratified columnar epithelium with stereocilia surrounded by three highly distinct, thick smooth muscle layers (inner longitudinal, middle circular, outer longitudinal).",
+                source: "Male Reproductive Histology Handout PDF, page 8: 'Ductus (Vas) Deferens... Muscularis - Three layers of smooth muscle, inner and outer longitudinal, middle circular'"
+            },
+            {
+                section: "Male Reproductive Histology",
+                fullLO: "LO5: Describe the organization and function of the seminal vesicle and prostate gland. Be able to identify the major age dependent degenerative changes, pathophysiology of benign prostatic hypertrophy and prostate cancer.",
+                question: "A 70-year-old man presents with increased urinary frequency, hesitancy, and a weak urinary stream. Digital rectal examination reveals a smooth, uniformly enlarged prostate gland without palpable nodules. A transurethral resection of the prostate (TURP) is performed to relieve his symptoms. In which of the following anatomical zones of the prostate did this patient's disease process primarily originate?",
+                options: {
+                    A: "Anterior fibromuscular stroma",
+                    B: "Central zone",
+                    C: "Peripheral zone",
+                    D: "Posterior lobe",
+                    E: "Transitional zone"
+                },
+                correctAnswer: "E",
+                rationale: "Benign prostatic hyperplasia (BPH) primarily originates from cell division in the glands of the transitional zone of the prostate. Because the transitional zone surrounds the urethra, its enlargement directly compresses the urethra, causing urinary outlet obstruction symptoms. In contrast, prostate cancer typically originates in the peripheral zone.",
+                source: "Male Reproductive Histology Handout PDF, page 9: 'Clinical Issues: 1. Benign Prostatic Hyperplasia – cell division from glands primarily in the transitional zone'"
+            },
+            {
+                section: "Male Reproductive Histology",
+                fullLO: "LO5: Describe the organization and function of the seminal vesicle and prostate gland. Be able to identify the major age dependent degenerative changes, pathophysiology of benign prostatic hypertrophy and prostate cancer.",
+                question: "A 30-year-old man undergoes semen analysis, which reveals a severely low pH and a complete absence of fructose. A congenital absence or complete obstruction of which of the following exocrine glands best explains these specific seminal fluid findings?",
+                options: {
+                    A: "Bulbourethral glands",
+                    B: "Epididymis",
+                    C: "Prostate gland",
+                    D: "Seminal vesicles",
+                    E: "Testes"
+                },
+                correctAnswer: "D",
+                rationale: "The seminal vesicles are highly coiled exocrine glands whose secretions add a large amount of fructose to the semen (providing an energy source for spermatozoa) and elevate the pH to neutralize the acidic environment of the female reproductive tract.",
+                source: "Male Reproductive Histology Handout PDF, page 8: 'Seminal vesicle... seminal vesicle secretion adds large amount of fructose to semen and elevates pH'"
+            },
+            {
+                section: "Male Reproductive Histology",
+                fullLO: "LO6: Describe the anatomical and microscopic organization of the penis and its components.",
+                question: "A 40-year-old man sustains a severe traumatic injury to the penis, resulting in a fracture of the thick connective tissue sheath that tightly binds the paired dorsal erectile bodies. During surgical repair, the urologist must suture this specific fibrous capsule to restore the integrity of the corpora cavernosa. Which of the following is the correct anatomical name for this structure?",
+                options: {
+                    A: "Buck's fascia",
+                    B: "Corpus spongiosum",
+                    C: "Dartos fascia",
+                    D: "Tunica albuginea",
+                    E: "Tunica vaginalis"
+                },
+                correctAnswer: "D",
+                rationale: "The tunica albuginea is the dense fibroelastic connective tissue capsule that surrounds the corpora cavernosa in the penis, providing the internal strength and rigidity needed during an erection.",
+                source: "Male Reproductive Histology Handout PDF, page 10: 'Penis... Corpora cavernosa penis (2) - dorsal... Tunica albuginea - dense fibroelastic c.t. capsule'"
+            },
+            {
+                section: "Male Reproductive Histology",
+                fullLO: "LO6: Describe the anatomical and microscopic organization of the penis and its components.",
+                question: "A medical researcher is studying the hemodynamics of penile erection. She observes that blood flow significantly increases into specialized anastomosing sinusoids located within the corpora cavernosa. The arterial branches that open directly into these cavernous vascular spaces to facilitate engorgement are the:",
+                options: {
+                    A: "Deep dorsal veins",
+                    B: "Dorsal arteries",
+                    C: "Helicine arteries",
+                    D: "Prostatic urethral arteries",
+                    E: "Superficial dorsal veins"
+                },
+                correctAnswer: "C",
+                rationale: "The erectile tissue consists of erectile sinuses separated by trabeculae. Engorgement of these sinuses is mediated by parasympathetic stimulation. The blood supply that directly feeds these cavernous sinuses comes from branches of the central artery, specifically called the helicine arteries.",
+                source: "Male Reproductive Histology Handout PDF, page 10: 'Erectile tissue - erectile sinuses separated by trabecula; increase in blood flow results in engorgement of sinuses... (also called central artery-branches into helicine arteries)'"
+            },
+
+            // --- Section 2: Development of the Reproductive System ---
+            {
+                section: "Development of the Reproductive System",
+                fullLO: "LO1: Describe and compare/contrast the development and differentiation of the male and female gonads (testis and ovary), beginning with their indifferent stage and including their descent.",
+                question: "A fetus is undergoing karyotype analysis, which reveals a 46, XY chromosomal pattern. The presence of the Sex-determining Region (SRY) on the Y chromosome leads to the production of testis-determining factor. Under the influence of this factor, which of the following events occurs during the differentiation of the indifferent gonad?",
+                options: {
+                    A: "The cortex differentiates into a testis and the medulla regresses.",
+                    B: "The medulla differentiates into a testis and the cortex regresses.",
+                    C: "The primary sex cords degenerate to form the vascular medulla.",
+                    D: "The secondary sex cords proliferate to surround primordial follicles.",
+                    E: "The urogenital ridge separates into the paramesonephric ducts."
+                },
+                correctAnswer: "B",
+                rationale: "In males (XY), the SRY gene causes the medulla of the indifferent gonad to differentiate into a testis, while the cortex regresses. Conversely, in females (XX), the cortex differentiates into an ovary and the medulla regresses to form the vascular ovarian medulla.",
+                source: "Development of the Reproductive System PDF, slide 13: 'Development of the Gonads • XY sex chromosome complex - The medulla differentiates into a testis - The cortex regresses'"
+            },
+            {
+                section: "Development of the Reproductive System",
+                fullLO: "LO1: Describe and compare/contrast the development and differentiation of the male and female gonads (testis and ovary), beginning with their indifferent stage and including their descent.",
+                question: "A male infant is evaluated in the newborn nursery and found to have an empty right scrotal sac. The pediatrician suspects cryptorchidism. During normal embryologic development, the testes are pulled inferiorly from the posterior abdominal wall into the inguinal canal by a fibrous band of tissue. Which of the following is the anatomical name of this structure?",
+                options: {
+                    A: "Caudal genital ligament",
+                    B: "Gubernaculum",
+                    C: "Processus vaginalis",
+                    D: "Suspensory ligament",
+                    E: "Tunica albuginea"
+                },
+                correctAnswer: "B",
+                rationale: "The gubernaculum is a band of urogenital mesentery that attaches to the developing testes in the 2nd month. It pulls the testes inferiorly from the posterior abdominal wall into the inguinal canal and eventually into the scrotum.",
+                source: "Development of the Reproductive System PDF, slide 50: 'Descent of the Testes... Gubernaculum will pull the testes inferiorly into the inguinal canal'"
+            },
+            {
+                section: "Development of the Reproductive System",
+                fullLO: "LO2: Describe the development and fates of the genital ducts (mesonephric and paramesonephric ducts) and urogenital sinus in the normal formation of the uterus, uterine tubes, and vagina in females and reproductive duct system in males. Discuss the embryological remnants that can persist.",
+                question: "A 14-year-old boy undergoes surgery for a testicular torsion. During the procedure, the surgeon notes a small, benign cystic appendage attached to the superior pole of the testis, known as the appendix testis. This structure is a known embryological remnant of which of the following?",
+                options: {
+                    A: "Epigenital tubules",
+                    B: "Mesonephric duct",
+                    C: "Paramesonephric duct",
+                    D: "Processus vaginalis",
+                    E: "Urogenital sinus"
+                },
+                correctAnswer: "C",
+                rationale: "In males, anti-müllerian hormone (AMH) causes the paramesonephric (Müllerian) ducts to degenerate. However, a small portion at the cranial end persists as the appendix testis.",
+                source: "Development of the Reproductive System PDF, slide 26: 'Genital Ducts in Males • Sertoli cells produced anti-müllerian hormone (AMH) causing the paramesonephric ducts to degenerate... Exception: a small portion at the cranial end - Becomes the appendix testis'"
+            },
+            {
+                section: "Development of the Reproductive System",
+                fullLO: "LO2: Describe the development and fates of the genital ducts (mesonephric and paramesonephric ducts) and urogenital sinus in the normal formation of the uterus, uterine tubes, and vagina in females and reproductive duct system in males. Discuss the embryological remnants that can persist.",
+                question: "A 28-year-old woman is found to have an asymptomatic, fluid-filled cyst located in the mesovarium adjacent to her ovary. Her gynecologist explains that this is an epoophoron cyst, which is an embryological remnant that failed to completely regress during early female development. The epoophoron is a direct remnant of the:",
+                options: {
+                    A: "Caudal end of the paramesonephric duct",
+                    B: "Cranial end of the mesonephric duct",
+                    C: "Phallus",
+                    D: "Sinovaginal bulbs",
+                    E: "Urethral folds"
+                },
+                correctAnswer: "B",
+                rationale: "In females, the mesonephric ducts largely degenerate due to the absence of testosterone. However, remnants can persist, including the epoophoron (remnant of the cranial end of the mesonephric duct) and the paroophoron (remnant of the caudal mesonephric duct).",
+                source: "Development of the Reproductive System PDF, slide 32: 'Remnants of the Mesonephric Ducts • Epoophoron - Remnant of the cranial end of the mesospheric duct'"
+            },
+            {
+                section: "Development of the Reproductive System",
+                fullLO: "LO3: Describe and compare/contrast the development of the male and female external genitalia. Relate the roles of testosterone, dihydrotestosterone (DHT), receptor abnormalities, & anti-müllerian hormone (AMH) to disorders of sexual development (DSD) and ambiguous genitalia.",
+                question: "During the development of external genitalia in a female fetus, the absence of high levels of androgens leads to characteristic morphological changes. Because they do not fuse together across the midline as they do in males, the unfused urethral folds in a female will normally develop into which of the following structures?",
+                options: {
+                    A: "Clitoris",
+                    B: "Glans penis",
+                    C: "Labia majora",
+                    D: "Labia minora",
+                    E: "Vestibule of the vagina"
+                },
+                correctAnswer: "D",
+                rationale: "In females, the urethral folds do not fuse (unlike in males where they fuse to form the penile urethra). Instead, the unfused urethral folds develop into the labia minora.",
+                source: "Development of the Reproductive System PDF, slide 43: 'External Genitalia: Females... Urethral folds do not fuse - Labia minora'"
+            },
+            {
+                section: "Development of the Reproductive System",
+                fullLO: "LO3: Describe and compare/contrast the development of the male and female external genitalia. Relate the roles of testosterone, dihydrotestosterone (DHT), receptor abnormalities, & anti-müllerian hormone (AMH) to disorders of sexual development (DSD) and ambiguous genitalia.",
+                question: "A newborn infant presents with highly masculinized external genitalia, including an enlarged clitoris and partially fused labial folds. Karyotype testing confirms a 46, XX chromosomal pattern. The endocrinologist suspects congenital adrenal hyperplasia (CAH), resulting in the overproduction of androgens. The excessive androgen exposure specifically caused the abnormal enlargement of which embryologic structure to form the enlarged clitoris?",
+                options: {
+                    A: "Cloacal membrane",
+                    B: "Genital swellings",
+                    C: "Genital tubercle",
+                    D: "Urethral folds",
+                    E: "Urogenital sinus"
+                },
+                correctAnswer: "C",
+                rationale: "The genital tubercle normally elongates rapidly under the influence of testosterone to form the phallus (penis) in males, or elongates slightly to form the clitoris in females. In a 46, XX fetus exposed to high androgen levels (like in CAH), the genital tubercle excessively enlarges, masculinizing the genitalia.",
+                source: "Development of the Reproductive System PDF, slides 38 & 45: 'External Genitalia: Males • Under the influence of testosterone... Causes rapid elongation of the genital tubercle - Now called the phallus' AND '46, XX Disorder of Sex Development (DSD)... Have been exposed to high levels of circulating androgenic compounds • Masculinize the genitalia • Common cause is congenital adrenal hyperplasia'"
+            },
+            {
+                section: "Development of the Reproductive System",
+                fullLO: "LO4: Discuss the embryological basis/cause, symptoms, clinical presentation, and treatment of congenital anomalies...",
+                question: "A male newborn is examined in the nursery. The pediatrician observes that the urethral meatus is located on the ventral surface of the penile shaft rather than at the tip of the glans. This congenital anomaly, known as hypospadias, is caused by which of the following developmental failures?",
+                options: {
+                    A: "Abnormal closure of the anterior abdominal wall",
+                    B: "Complete absence of the genital tubercle",
+                    C: "Failure of the processus vaginalis to close",
+                    D: "Incomplete fusion of the urethral folds",
+                    E: "Maldescent of the testes"
+                },
+                correctAnswer: "D",
+                rationale: "Hypospadias is characterized by abnormal urethral orifices on the ventral side of the penis. It is caused by the incomplete fusion of the urethral folds during external genitalia development. (Epispadias is on the dorsal side and is associated with abdominal wall/bladder exstrophy).",
+                source: "Development of the Reproductive System PDF, slide 41: 'Hypospadias • 3 to 5/1,000 births • Incomplete fusion of the urethral folds'"
+            },
+            {
+                section: "Development of the Reproductive System",
+                fullLO: "LO4: Discuss the embryological basis/cause, symptoms, clinical presentation, and treatment of congenital anomalies...",
+                question: "A 6-month-old boy presents with a soft, painless mass in the right scrotum that transilluminates brilliantly when a light is shone through it. The pediatrician explains that fluid has accumulated in a space surrounding the testis. This space represents an unobliterated peritoneal outpouching that normally travels into the scrotum. What is the name of this structure?",
+                options: {
+                    A: "Cloaca",
+                    B: "Gubernaculum",
+                    C: "Processus vaginalis",
+                    D: "Sinovaginal bulb",
+                    E: "Uterine septum"
+                },
+                correctAnswer: "C",
+                rationale: "The processus vaginalis is a peritoneal outpouching that enters the scrotum carrying layers of the abdominal wall. Normally, the canal connecting it to the peritoneal cavity obliterates. If it fails to close, fluid can accumulate, causing a hydrocele.",
+                source: "Development of the Reproductive System PDF, slides 51 & 52: 'Process Vaginalis • Peritoneal outpouching that enters the scrotum... Canal connecting the lumen of the process vaginalis with the peritoneal cavity will be obliterated at birth' AND 'Hydrocele • Failure of the process vaginalis to close'"
+            },
+            {
+                section: "Development of the Reproductive System",
+                fullLO: "LO4: Discuss the embryological basis/cause, symptoms, clinical presentation, and treatment of congenital anomalies...",
+                question: "A 26-year-old woman is investigated for recurrent miscarriages. Pelvic MRI reveals a \"uterus didelphys,\" characterized by a completely double uterus and a double vagina. This anomaly occurs due to a failure of which of the following embryological processes?",
+                options: {
+                    A: "Canalization of the vaginal plate",
+                    B: "Degeneration of the mesonephric ducts",
+                    C: "Formation of the sinovaginal bulbs",
+                    D: "Fusion of the caudal paramesonephric ducts",
+                    E: "Invagination of the urogenital ridge"
+                },
+                correctAnswer: "D",
+                rationale: "The female reproductive tract (uterus, cervix, upper vagina) forms from the paramesonephric (Müllerian) ducts. The caudal portions of the two ducts normally fuse to form a single uterus. Failure of this fusion leads to uterine duplication anomalies, such as uterus didelphys.",
+                source: "Development of the Reproductive System PDF, slides 28 & 33: 'Genital Ducts in Females • First two parts will become the uterine tube • The caudal portion fuses and will form the uterus' AND 'Uterine and Vaingal Defects... Uterus didelphys with double vagina [Diagram A showing complete failure of fusion]'"
+            },
+            {
+                section: "Development of the Reproductive System",
+                fullLO: "LO4: Discuss the embryological basis/cause, symptoms, clinical presentation, and treatment of congenital anomalies...",
+                question: "A 16-year-old patient with ambiguous genitalia undergoes surgical exploration. Biopsies of the gonads confirm the presence of both ovarian parenchyma with primary Graafian follicles and testicular parenchyma with dysgenetic testicular cords. Which of the following is the most common karyotype associated with this specific disorder of sex development?",
+                options: {
+                    A: "45, X",
+                    B: "46, XX",
+                    C: "46, XY",
+                    D: "47, XXY",
+                    E: "47, XYY"
+                },
+                correctAnswer: "B",
+                rationale: "Ovotesticular Disorder of Sex Development (DSD) is a rare condition where both ovarian and testicular tissues are present in the same individual. The most common karyotype for this condition is 46, XX.",
+                source: "Development of the Reproductive System PDF, slide 44: 'Ovotesticular Disorder of Sex Development (DSD) • Both ovarian and testicular tissue is present... • Most common karyotype is 46, XX'"
+            },
+            {
+                section: "Development of the Reproductive System",
+                fullLO: "LO4: Discuss the embryological basis/cause, symptoms, clinical presentation, and treatment of congenital anomalies...",
+                question: "An endocrinologist evaluates a genotypically 46, XX infant who presents with severely masculinized genitalia at birth. The physician diagnoses congenital adrenal hyperplasia (CAH). Which of the following describes the fundamental pathophysiology causing this patient's ambiguous genitalia?",
+                options: {
+                    A: "Complete absence of anti-müllerian hormone",
+                    B: "Exposure to high levels of circulating androgenic compounds",
+                    C: "Failure of the indifferent gonads to form the gonadal ridge",
+                    D: "Overproduction of estrogens by the maternal placenta",
+                    E: "Spontaneous mutation of the SRY gene on the X chromosome"
+                },
+                correctAnswer: "B",
+                rationale: "In 46, XX DSD caused by CAH, the adrenal glands do not function properly, leading to a hormone imbalance. This results in the female fetus being exposed to high levels of circulating androgenic compounds, which masculinizes the developing genitalia.",
+                source: "Development of the Reproductive System PDF, slide 45: '46, XX Disorder of Sex Development (DSD) • Genetically are females • Have been exposed to high levels of circulating androgenic compounds • Masculinize the genitalia • Common cause is congenital adrenal hyperplasia'"
+            },
+
+            // --- Section 3: Tumors of the Male Genitals ---
+            {
+                section: "Tumors of the Male Genitals",
+                fullLO: "LO1: Review normal gross and microscopic findings of male genital system",
+                question: "A pathologist is examining a normal histologic cross-section of the penile shaft to use as a teaching reference. She points to the large, paired dorsal bodies containing interconnected vascular spaces lined by endothelium and surrounded by smooth muscle. These specific bodies are individually enveloped by the tunica albuginea. What is the correct term for these paired structures?",
+                options: {
+                    A: "Buck's fascia",
+                    B: "Corpora cavernosa",
+                    C: "Corpus spongiosum",
+                    D: "Dartos fascia",
+                    E: "Glans penis"
+                },
+                correctAnswer: "B",
+                rationale: "The paired dorsal structures of the penile shaft are the corpora cavernosa. They contain the major erectile tissue (anastomosing sinusoids) and are encased by the thick tunica albuginea. The single ventral structure surrounding the urethra is the corpus spongiosum.",
+                source: "Tumors of the Male Genitals PDF, slide 5: \"Fig. 15-3 Anatomy of penile shaft: skin (S), dartos (D), Buck's fascia (BF), tunica albuginea (TA), corpora cavernosa (CC), corpus spongiosum (CS), and urethra (U).\""
+            },
+            {
+                section: "Tumors of the Male Genitals",
+                fullLO: "LO1: Review normal gross and microscopic findings of male genital system",
+                question: "A histological slide of a normal testis is reviewed. The seminiferous tubules are intact. Between the tubules, in the interstitial stroma, clusters of cells with round nuclei and eosinophilic cytoplasm are visible. According to standard testicular histology, these specific interstitial cells are responsible for secreting which of the following?",
+                options: {
+                    A: "Androgen-binding protein",
+                    B: "Anti-müllerian hormone",
+                    C: "Estrogen",
+                    D: "Inhibin",
+                    E: "Testosterone"
+                },
+                correctAnswer: "E",
+                rationale: "The cells located in the interstitium between the seminiferous tubules are the Leydig cells. Their normal function is the production and secretion of testosterone. Sertoli cells (which produce ABP and AMH) are located within the seminiferous tubules themselves.",
+                source: "Tumors of the Male Genitals PDF, slide 28: \"Spermatic cord... LC: Leydig cells\""
+            },
+            {
+                section: "Tumors of the Male Genitals",
+                fullLO: "LO2: Review microscopic features of the most common benign and malignant tumors",
+                question: "A 42-year-old man undergoes a radical orchiectomy for a testicular mass. Microscopic examination of the tumor reveals solid sheets of uniform cells with clear cytoplasm and distinct cell borders. The tumor cells are divided into well-defined lobules by delicate fibrous septa that contain a prominent infiltrate of lymphocytes. What is the most likely diagnosis?",
+                options: {
+                    A: "Choriocarcinoma",
+                    B: "Classic seminoma",
+                    C: "Embryonal carcinoma",
+                    D: "Spermatocytic tumor",
+                    E: "Yolk sac tumor"
+                },
+                correctAnswer: "B",
+                rationale: "Classic seminoma is the most common pure germ cell tumor. Its classic histological appearance consists of uniform tumor cells with clear cytoplasm, arranged in nests or sheets, which are separated by fibrous septa containing a prominent lymphocytic infiltrate.",
+                source: "Tumors of the Male Genitals PDF, slide 38: \"Classic Seminoma... Clusters of lymphocytes (red circle) are between the uniform tumor cells that have clear cytoplasm (blue circle)\""
+            },
+            {
+                section: "Tumors of the Male Genitals",
+                fullLO: "LO2: Review microscopic features of the most common benign and malignant tumors",
+                question: "A 16-month-old boy is brought to the pediatrician for a painless, right-sided testicular mass. Serum alpha-fetoprotein (AFP) is highly elevated. A biopsy shows a microcystic growth pattern with distinctive structures resembling primitive glomeruli. These structures consist of a central blood vessel covered by tumor cells, surrounded by a clear space. Which of the following is the correct term for this characteristic histological finding?",
+                options: {
+                    A: "Corpora amylacea",
+                    B: "Papillary cystadenoma",
+                    C: "Reinke crystals",
+                    D: "Schiller-Duval bodies",
+                    E: "Syncytiotrophoblasts"
+                },
+                correctAnswer: "D",
+                rationale: "The patient has a Yolk Sac Tumor, the most common testicular neoplasm in infants and young children, characterized by elevated AFP. The classic histologic finding is the Schiller-Duval body, which is a papillary core of fibrous tissue with a central blood vessel surrounded by a clear space.",
+                source: "Tumors of the Male Genitals PDF, slides 48-49: \"Yolk Sac Tumor (YST)... Schiller-Duval body: Papillary core of fibrous tissue with central blood vessel surrounded by clear space and covered by tumor cells - Elevated serum alpha fetoprotein (AFP)\""
+            },
+            {
+                section: "Tumors of the Male Genitals",
+                fullLO: "LO3: Recognize their etiology, risk factors and clinical presentation.",
+                question: "A 68-year-old man presents with a non-healing, ulcerated lesion on the glans penis that has been enlarging over the past several months. Biopsy confirms invasive squamous cell carcinoma. Which of the following factors in this patient's history is a well-established, major risk factor for the development of this specific malignancy?",
+                options: {
+                    A: "Circumcision at birth",
+                    B: "Congenital adrenal hyperplasia",
+                    C: "Human papillomavirus (HPV) infection",
+                    D: "Klinefelter syndrome",
+                    E: "Prior mumps infection"
+                },
+                correctAnswer: "C",
+                rationale: "Carcinoma of the penis is an uncommon squamous cell carcinoma. Major risk factors include HPV infection (particularly types 16 and 18, found in 63% of cases), smoking, poor hygiene, and being uncircumcised. Circumcision at birth is actually protective.",
+                source: "Tumors of the Male Genitals PDF, slide 14: \"Carcinoma of the Penis • Etiologic factors: – HPV infection (type 16, 18 most frequent)... – Smoking – Poor hygiene\""
+            },
+            {
+                section: "Tumors of the Male Genitals",
+                fullLO: "LO3: Recognize their etiology, risk factors and clinical presentation.",
+                question: "A 29-year-old man feels a solid, painless lump in his left testicle while showering. He undergoes a scrotal ultrasound, which confirms a solid intratesticular mass. He is diagnosed with a testicular germ cell tumor. Which of the following medical conditions in his past is the most significant risk factor for the development of this neoplasm?",
+                options: {
+                    A: "Benign prostatic hyperplasia",
+                    B: "Cryptorchidism",
+                    C: "Epispadias",
+                    D: "Hydrocele",
+                    E: "Hypospadias"
+                },
+                correctAnswer: "B",
+                rationale: "Cryptorchidism (undescended testicle) is a major risk factor for the development of testicular cancer, increasing the risk 3 to 5-fold. Other risk factors include a family history of testicular cancer, a personal history of testicular cancer, and testicular dysgenesis (e.g., Klinefelter syndrome).",
+                source: "Tumors of the Male Genitals PDF, slide 25: \"Risk factors • Cryptorchidism (increased 3-5 fold) • Testicular dysgenesis (Klinefelter) • Family history of testicular cancer\""
+            },
+            {
+                section: "Tumors of the Male Genitals",
+                fullLO: "LO4: Recognize their behavior and prognosis",
+                question: "A 28-year-old man presents with testicular pain and a palpable mass. He undergoes a radical orchiectomy, and histological examination reveals a pure embryonal carcinoma (EC). Which of the following best describes the expected clinical behavior and typical management approach for this specific type of neoplasm?",
+                options: {
+                    A: "It has an invariably benign clinical course and requires no further follow-up.",
+                    B: "It is associated with an increased risk of progression and is almost never offered surveillance.",
+                    C: "It is the most common testicular neoplasm in infants and is reliably curative with surgery alone.",
+                    D: "It represents a fully differentiated pathway and is universally chemoresistant.",
+                    E: "It typically presents as clinical stage I and is standardly managed with strict surveillance without adjuvant therapy."
+                },
+                correctAnswer: "B",
+                rationale: "Embryonal carcinoma (EC) is a highly aggressive non-seminomatous germ cell tumor. The extent of EC within a germ cell tumor is associated with an increased risk of disease progression. Because of this aggressive behavior, patients often receive adjuvant treatment and are almost never offered surveillance. This contrasts with classic seminomas, which are often managed with surveillance in Stage I.",
+                source: "Tumors of the Male Genitals PDF, slide 46: \"Extent of EC within a GCT associated with increased risk of disease progression. Prognosis and management is stage dependent. Often receive adjuvant treatment and almost never offered surveillance.\""
+            },
+            {
+                section: "Tumors of the Male Genitals",
+                fullLO: "LO4: Recognize their behavior and prognosis",
+                question: "A 25-year-old man undergoes orchiectomy for a testicular tumor. Histological examination shows a disordered mass of mature tissues, including cartilage, respiratory epithelium, and squamous epithelium, with no immature elements present. Based on his age group, the oncologist informs him that the tumor has significant metastatic potential. Which of the following is the most accurate classification for this patient's tumor?",
+                options: {
+                    A: "Benign classic seminoma",
+                    B: "Benign post-pubertal teratoma",
+                    C: "Malignant choriocarcinoma",
+                    D: "Malignant post-pubertal teratoma",
+                    E: "Malignant yolk sac tumor"
+                },
+                correctAnswer: "D",
+                rationale: "Teratomas consist of tissues from all three germ layers (ectoderm, mesoderm, endoderm). Their behavior is highly age-dependent. In pre-pubertal boys, they are invariably benign. However, in post-pubertal males, teratomas are considered malignant and have the potential for metastasis regardless of how \"mature\" or benign the histology appears.",
+                source: "Tumors of the Male Genitals PDF, slides 55 & 62: \"Teratoma... Occur in: – Pre-pubertal: 20% of cases; invariably benign (<4 years of age); pure form. – Post-pubertal: Component of mixed GCT, pure form rare (<7%), considered malignant.\" AND \"Summary... Teratomas in post-pubertal boys are malignant with potential for metastasis regardless of histology\""
+            }
+        ];
+
+        // --- Core Logic ---
+        const quizRoot = document.getElementById('quiz-root');
+        const themeSelect = document.getElementById('theme-select');
+        const pinBtn = document.getElementById('pin-btn');
+        const mainHeader = document.getElementById('main-header');
+        const sectionNav = document.getElementById('section-nav');
+        const customBuilder = document.getElementById('custom-builder');
+        const rootElements = document.documentElement;
+
+        let isRevealed = false;
+
+        function toggleAllLOs() {
+            isRevealed = !isRevealed;
+            const btn = document.getElementById('reveal-all-btn');
+            btn.textContent = isRevealed ? "Hide Learning Objectives" : "Show Learning Objectives";
+            
+            document.querySelectorAll('.lo-box').forEach(box => {
+                box.style.display = isRevealed ? 'block' : 'none';
+            });
+        }
+
+        function initQuiz() {
+            let currentSection = "";
+            let sectionIndex = 0;
+            
+            quizData.forEach((item, index) => {
+                if (item.section !== currentSection) {
+                    currentSection = item.section;
+                    
+                    const sectionId = 'sec-' + sectionIndex;
+                    
+                    const sectionHeader = document.createElement('h2');
+                    sectionHeader.className = 'section-header';
+                    sectionHeader.id = sectionId;
+                    sectionHeader.textContent = currentSection;
+                    quizRoot.appendChild(sectionHeader);
+
+                    const navBtn = document.createElement('button');
+                    let btnText = currentSection;
+                    if (btnText.includes("Male Reproductive Histology")) btnText = "Male Repro Histology";
+                    if (btnText.includes("Development of the Reproductive System")) btnText = "Repro Dev";
+                    if (btnText.includes("Tumors of the Male Genitals")) btnText = "Male Genital Tumors";
+                    
+                    navBtn.textContent = btnText;
+                    navBtn.onclick = () => {
+                        document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+                    };
+                    sectionNav.appendChild(navBtn);
+
+                    sectionIndex++;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+
+                const loBox = document.createElement('div');
+                loBox.className = 'lo-box';
+                loBox.id = `lo-${index}`;
+                loBox.innerHTML = item.fullLO;
+                card.appendChild(loBox);
+
+                const qText = document.createElement('div');
+                qText.className = 'question-text';
+                qText.innerHTML = `${index + 1}. ${item.question}`;
+                card.appendChild(qText);
+
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'options-grid';
+
+                for (const[key, value] of Object.entries(item.options)) {
+                    const label = document.createElement('label');
+                    label.className = 'option-label';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = `question-${index}`;
+                    input.value = key;
+
+                    const span = document.createElement('span');
+                    span.innerHTML = `${key}. ${value}`;
+
+                    label.appendChild(input);
+                    label.appendChild(span);
+                    optionsGrid.appendChild(label);
+                }
+                card.appendChild(optionsGrid);
+
+                const btn = document.createElement('button');
+                btn.className = 'btn-check';
+                btn.textContent = 'Check Answer';
+                btn.onclick = () => checkAnswer(index);
+                card.appendChild(btn);
+
+                const feedback = document.createElement('div');
+                feedback.className = 'feedback';
+                feedback.id = `feedback-${index}`;
+                card.appendChild(feedback);
+
+                quizRoot.appendChild(card);
+            });
+
+            const returnContainer = document.createElement('div');
+            returnContainer.style.textAlign = 'center';
+            returnContainer.style.marginTop = '2rem';
+            
+            const returnBtn = document.createElement('a');
+            returnBtn.href = 'https://ibecerramcg.github.io/GI-GU-ENDO-Practice-Quizzes/';
+            returnBtn.className = 'btn-link';
+            returnBtn.textContent = '← Return to Quiz Directory';
+            
+            returnContainer.appendChild(returnBtn);
+            quizRoot.appendChild(returnContainer);
+
+            const savedTheme = localStorage.getItem('quizTheme') || 'dark';
+            themeSelect.value = savedTheme;
+            changeTheme(savedTheme);
+
+            const savedPinState = localStorage.getItem('headerPinned');
+            toggleHeader(savedPinState !== 'false');
+        }
+
+        function checkAnswer(index) {
+            const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+            const feedbackEl = document.getElementById(`feedback-${index}`);
+            const data = quizData[index];
+
+            if (!selected) {
+                alert("Please select an answer.");
+                return;
+            }
+
+            const isCorrect = selected.value === data.correctAnswer;
+            
+            let html = `<span class="feedback-header">${isCorrect ? "Correct!" : "Incorrect"}</span>`;
+            if (!isCorrect) {
+                html += `<div>The correct answer is <strong>${data.correctAnswer}</strong>.</div>`;
+            }
+            
+            html += `<div class="rationale"><strong>Rationale:</strong> ${data.rationale}</div>`;
+            html += `<div class="source"><strong>Source:</strong> ${data.source}</div>`;
+
+            feedbackEl.innerHTML = html;
+            feedbackEl.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedbackEl.style.display = 'block';
+            
+            const loBox = document.getElementById(`lo-${index}`);
+            loBox.style.display = 'block';
+        }
+
+        function changeTheme(themeName) {
+            localStorage.setItem('quizTheme', themeName);
+            
+            if (themeName === 'custom') {
+                rootElements.removeAttribute('data-theme');
+                customBuilder.classList.add('active');
+                loadCustomTheme();
+            } else {
+                rootElements.setAttribute('data-theme', themeName);
+                customBuilder.classList.remove('active');
+                rootElements.removeAttribute('style');
+            }
+        }
+
+        function updateCustomTheme() {
+            const bg = document.getElementById('color-bg').value;
+            const card = document.getElementById('color-card').value;
+            const text = document.getElementById('color-text').value;
+            const accent = document.getElementById('color-accent').value;
+
+            rootElements.style.setProperty('--bg-body', bg);
+            rootElements.style.setProperty('--bg-header', bg);
+            rootElements.style.setProperty('--bg-card', card);
+            rootElements.style.setProperty('--highlight-bg', card);
+            rootElements.style.setProperty('--text-main', text);
+            rootElements.style.setProperty('--text-accent', accent);
+            rootElements.style.setProperty('--button-bg', accent);
+            rootElements.style.setProperty('--button-text', bg);
+            rootElements.style.setProperty('--border-color', accent + '40');
+
+            const customColors = { bg, card, text, accent };
+            localStorage.setItem('customThemeColors', JSON.stringify(customColors));
+        }
+
+        function loadCustomTheme() {
+            const savedColors = JSON.parse(localStorage.getItem('customThemeColors'));
+            if (savedColors) {
+                document.getElementById('color-bg').value = savedColors.bg;
+                document.getElementById('color-card').value = savedColors.card;
+                document.getElementById('color-text').value = savedColors.text;
+                document.getElementById('color-accent').value = savedColors.accent;
+                updateCustomTheme();
+            } else {
+                updateCustomTheme();
+            }
+        }
+
+        function toggleHeader(forceState) {
+            const isCurrentlyPinned = !mainHeader.classList.contains('unpinned');
+            const newState = (typeof forceState === 'boolean') ? forceState : !isCurrentlyPinned;
+
+            if (newState) {
+                mainHeader.classList.remove('unpinned');
+                pinBtn.classList.add('pin-active');
+                localStorage.setItem('headerPinned', 'true');
+            } else {
+                mainHeader.classList.add('unpinned');
+                pinBtn.classList.remove('pin-active');
+                localStorage.setItem('headerPinned', 'false');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initQuiz);
+
+    </script>
+</body>
+</html>
