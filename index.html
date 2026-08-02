@@ -1394,7 +1394,7 @@ function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); 
 const sections = [];
 quizData.forEach(q => { if (!sections.includes(q.section)) sections.push(q.section); });
 function shortLabel(name) {
-    const map = {};
+    const map = {"Development of the Reproductive System":"Reproductive Development"};
     return map[name] || name;
 }
 window.__bbShortLabel = shortLabel;
